@@ -1,0 +1,82 @@
+version: "3.8"
+
+services:
+  docker-events-listener:
+    container_name: monolith_docker-events-listener
+    build:
+      context: docker-events-listener-build
+      dockerfile: Dockerfile # The Dockerfile from ./docker-events-listener-build
+    networks:
+      - monolith_network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  localstack:
+    image: localstack/localstack
+    container_name: monolith_localstack
+    ports:
+      - "127.0.0.1:53:53" # only required for Pro
+      - "127.0.0.1:53:53/udp" # only required for Pro
+      - "127.0.0.1:443:443" # only required for Pro
+      - "127.0.0.1:4510-4530:4510-4530" # only required for Pro
+      - "4566-4597:4566-4597"
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      SERVICES: lambda,cloudformation,apigateway,iam,sts,ssm,rds,s3,sqs,sns
+      DATA_DIR: /tmp/localstack/data
+      LAMBDA_EXECUTOR: docker
+      DOCKER_HOST: unix:///var/run/docker.sock
+      LAMBDA_DOCKER_NETWORK: host
+      EDGE_PORT: 4566
+      DEBUG: 1
+    env_file:
+      - .env.docker
+    volumes:
+      - "./tmp:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - monolith_network
+    depends_on:
+      - docker-events-listener
+
+  run-migrations:
+    build:
+      context: "."
+      dockerfile: Dockerfile.migrations
+    container_name: migrations_migrations
+    command: yarn internal:docker:run:migrations
+    networks:
+      - monolith_network
+    environment:
+      PGUSER: test
+      PGDATABASE: test
+      PGPASSWORD: 123
+      PGHOST: localstack
+      PGPORT: 4510
+    volumes:
+      - ./:/app/
+      - nodemodules:/app/node_modules
+
+  api:
+    build: "."
+    container_name: monolith_api
+    command: bash -c "sleep 5; yarn internal:local"
+    ports:
+      - 3000:3000
+    networks:
+      - monolith_network
+    #environment:
+    #  SLS_DEBUG: "*"
+    volumes:
+      - ./:/app/
+      - nodemodules:/app/node_modules
+      - layers:/app/layers
+
+volumes:
+  database-data:
+  nodemodules:
+  layers:
+
+networks:
+  monolith_network:
+    driver: bridge
