@@ -1,5 +1,5 @@
 import type { APIGatewayEvent } from "aws-lambda";
-import { getDynamoInstance } from "config/dynamo";
+import { getPostgreInstance } from "config/postgres";
 import { makeController } from "helpers/make-controller";
 import { genAllTokens } from "utils/auth-tokens/gen-all-tokens";
 
@@ -8,11 +8,13 @@ import { validate } from "./validate";
 
 export const controller = makeController<APIGatewayEvent>(
 	async ({ event }) => {
+		const postgre = await getPostgreInstance();
+
 		const params = await validate((event.body || {}) as any);
 
 		return service(
 			{
-				dynamo: getDynamoInstance(),
+				postgre,
 				genAllTokens,
 			},
 			params,

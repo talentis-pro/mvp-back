@@ -25,6 +25,10 @@ declare global {
 			PGDATABASE: string;
 			PGPASSWORD: string;
 			PGPORT: string;
+			/**
+			 * Paseto
+			 */
+			PASETO_SECRET: string;
 		}
 	}
 }

@@ -13,7 +13,7 @@ export const verify = makeHandler({
 			http: {
 				cors: true,
 				method: "POST",
-				path: "accounts/verify",
+				path: "auth/verify",
 			},
 		},
 	],

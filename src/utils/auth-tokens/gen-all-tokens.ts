@@ -1,15 +1,11 @@
-import type { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-
 import { genAccessToken } from "./gen-access-token";
 import { genRefreshToken } from "./gen-refresh-token";
 
-import type { UserRoleEnum } from "enums/user-role";
+import type { PostgreDbClient } from "types/db";
 
 interface GenAllTokens {
-	companyId: string;
 	userId: string;
-	role: UserRoleEnum;
-	dynamo?: DynamoDBClient;
+	postgre: PostgreDbClient;
 }
 
 export const genAllTokens = async (params: GenAllTokens) => {

@@ -1,59 +1,39 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import type { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { QueryCommand, PutItemCommand } from "@aws-sdk/client-dynamodb";
-import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { getDynamoInstance } from "config/dynamo";
 import { uid } from "uid/single";
+import { dayjs } from "utils/date";
+
+import type { PostgreDbClient } from "types/db";
 
 interface GenRefreshTokenInput {
-	companyId: string;
 	userId: string;
-	dynamo?: DynamoDBClient;
+	postgre: PostgreDbClient;
 }
 
 export const genRefreshToken = async ({
-	companyId,
 	userId,
-	dynamo: dynamodbInstance,
+	postgre,
 }: GenRefreshTokenInput) => {
-	const dynamo = dynamodbInstance || getDynamoInstance();
-
-	const existentRefreshTokenRecord = await dynamo.send(
-		new QueryCommand({
-			TableName: "companies",
-			KeyConditionExpression: "pk = :pk AND begins_with(sk, :sk)",
-			ExpressionAttributeValues: marshall({
-				":pk": `COMPANY#${companyId}#USER#${userId}`,
-				":sk": "REFRESH_TOKEN#",
-			}),
-		}),
+	const existentRefreshTokenRecord = await postgre.query(
+		'SELECT * FROM refresh_tokens WHERE "userId" = $1;',
+		[userId],
 	);
 
-	const existentRefreshToken = existentRefreshTokenRecord.Items?.shift();
+	const existentRefreshToken = existentRefreshTokenRecord.rows.shift();
 
 	if (existentRefreshToken) {
-		const refreshToken = unmarshall(existentRefreshToken).sk.replace(
-			"REFRESH_TOKEN#",
-			"",
-		);
-
 		return {
-			refreshToken,
+			refreshToken: existentRefreshToken.token,
 		};
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 	const token = uid(52);
+	const createdAt = dayjs().toISOString();
 
-	await dynamo.send(
-		new PutItemCommand({
-			TableName: "companies",
-			Item: marshall({
-				pk: `COMPANY#${companyId}#USER#${userId}`,
-				sk: `REFRESH_TOKEN#${token}`,
-			}),
-		}),
+	await postgre.query(
+		'INSERT INTO refresh_tokens("userId", "token", "createdAt") VALUES ($1, $2, $3);',
+		[userId, token, createdAt],
 	);
 
 	return {

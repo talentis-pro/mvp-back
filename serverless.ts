@@ -4,9 +4,7 @@ import type { AWS } from "@serverless/typescript";
 import { merge } from "lodash";
 import { config } from "dotenv";
 
-import { resourcesAccount } from "./resources-account";
-
-import { accountDomain } from "./src/api/account";
+import { authDomain } from "./src/api/auth";
 
 config();
 
@@ -89,26 +87,24 @@ const baseConfig: Partial<AWS> = {
 };
 
 
-const accountConfig = {
-	service: "account",
+const authConfig = {
+	service: "auth",
 	provider: {
 		environment: {
-			STRIPE_SECRET_KEY: "${ssm:account-${opt:stage, 'dev'}-stripeSecretKey}",
-			SOURCE_EMAIL_TO_SEND_EMAILS: "${ssm:account-${opt:stage, 'dev'}-sourceEmailToSendEmails}",
-			VERIFY_ACCOUNT_URL: "${ssm:account-${opt:stage, 'dev'}-verifyAccountUrl}",
+			SOURCE_EMAIL_TO_SEND_EMAILS: "${ssm:auth-${opt:stage, 'dev'}-sourceEmailToSendEmails}",
+			VERIFY_ACCOUNT_URL: "${ssm:auth-${opt:stage, 'dev'}-verifyAccountUrl}",
 		}
 	},
-	resources: resourcesAccount,
 	functions: {
-		...accountDomain,
+		...authDomain,
 	},
 };
 
 const getConfig = () => {
 	switch (process.env.DEPLOY_TYPE) {
-		case "ACCOUNT":
+		case "AUTH":
 		default:
-			return merge(baseConfig, accountConfig);
+			return merge(baseConfig, authConfig);
 	}
 };
 

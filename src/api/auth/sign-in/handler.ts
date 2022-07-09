@@ -6,14 +6,14 @@
 import { getHandlerPath } from "../../../helpers/get-handler-path";
 import { makeHandler } from "../../../helpers/make-handler";
 
-export const create = makeHandler({
+export const signIn = makeHandler({
 	handler: `${getHandlerPath(__dirname)}/controller.controller`,
 	events: [
 		{
 			http: {
 				cors: true,
 				method: "POST",
-				path: "accounts",
+				path: "auth/sign-in",
 			},
 		},
 	],

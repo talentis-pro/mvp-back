@@ -1,5 +1,5 @@
 import type { APIGatewayEvent } from "aws-lambda";
-import { decode } from "jsonwebtoken";
+import { V1 } from "paseto";
 
 import type { Token } from "types/token";
 
@@ -7,7 +7,7 @@ interface GetTokenDataParams {
 	event: APIGatewayEvent;
 }
 
-export const getTokenData = (event: GetTokenDataParams) => {
+export const getTokenData = async (event: GetTokenDataParams) => {
 	const authHeader: string =
 		(event as any)?.headers?.authorization ||
 		(event as any)?.headers?.Authorization;
@@ -16,12 +16,12 @@ export const getTokenData = (event: GetTokenDataParams) => {
 
 	if (isAwsHeader) return {};
 
-	const decoded = decode(authHeader.split(" ").pop()!) as Token;
-
-	const [, companyId, , userId] = decoded.sub.split("#");
+	const decoded = (await V1.decrypt(
+		authHeader.split(" ").pop()!,
+		process.env.PASETO_SECRET,
+	)) as Token;
 
 	return {
-		companyId,
-		userId,
+		userId: decoded.sub,
 	};
 };
