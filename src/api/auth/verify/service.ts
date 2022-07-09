@@ -20,17 +20,14 @@ export const service = async (
 	{ userId, verificationToken }: ServiceParams,
 ) => {
 	const verificationTokenRecord = await postgre.query(
-		'SELECT * FROM verification_tokens WHERE "userId" = $1 AND "verificationToken" = $2;',
+		'SELECT * FROM verification_tokens WHERE "userId" = $1 AND "token" = $2;',
 		[userId, verificationToken],
 	);
 
 	const verificationTokenExists = verificationTokenRecord.rows.shift();
 
 	if (!verificationTokenExists) {
-		throw new CustomError(
-			"VERIFICATION_TOKEN_NOT_FOUND",
-			StatusCodeEnum.NOT_FOUND,
-		);
+		throw new CustomError("NOT_FOUND", StatusCodeEnum.NOT_FOUND);
 	}
 
 	await postgre.query('UPDATE users SET "verified" = $1 WHERE "userId" = $2;', [
@@ -39,7 +36,7 @@ export const service = async (
 	]);
 
 	await postgre.query(
-		'DELETE FROM verification_tokens WHERE "userId" = $1 AND "verificationToken" = $2;',
+		'DELETE FROM verification_tokens WHERE "userId" = $1 AND "token" = $2;',
 		[userId, verificationToken],
 	);
 
