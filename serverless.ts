@@ -5,9 +5,9 @@ import { merge } from "lodash";
 import { config } from "dotenv";
 
 import { authDomain } from "./src/api/auth";
+import { templateDomain } from "./src/api/template";
 
 config();
-
 
 const baseConfig: Partial<AWS> = {
 	configValidationMode: "error",
@@ -86,7 +86,6 @@ const baseConfig: Partial<AWS> = {
 	},
 };
 
-
 const authConfig = {
 	service: "auth",
 	provider: {
@@ -100,8 +99,18 @@ const authConfig = {
 	},
 };
 
+const templateConfig = {
+	service: "template",
+	functions: {
+		...templateDomain,
+	},
+};
+
 const getConfig = () => {
 	switch (process.env.DEPLOY_TYPE) {
+		case "TEMPLATE":
+			return merge(baseConfig, templateConfig);
+
 		case "AUTH":
 		default:
 			return merge(baseConfig, authConfig);
