@@ -17,7 +17,7 @@ export interface ServiceParams {}
 
 export const service = async ({ postgre }: Injectables, _: ServiceParams) => {
 	const records = await postgre.query(
-		'SELECT * FROM templates WHERE "status" = $1;',
+		'SELECT * FROM resume_templates WHERE "status" = $1;',
 		[TemplateStatusEnum.AVAILABLE],
 	);
 
