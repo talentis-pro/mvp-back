@@ -1,11 +1,17 @@
 import type { Callback, Context } from "aws-lambda";
 
+import type { PostgreDbClient } from "./db";
+
 import type { StatusCodeEnum } from "../enums/status-code";
 
 interface RouteInput<T> {
 	event: T;
 	context: Context;
 	callback: Callback;
+}
+
+interface PostgreRouteInput<T> extends RouteInput<T> {
+	postgre: PostgreDbClient;
 }
 
 export interface RouteOutput {
@@ -24,6 +30,10 @@ export type AnyFunc<T> = (p: RouteInput<T>) => any;
 
 export type Func<T> = (
 	p: RouteInput<T>,
+) => Promise<RouteOutput> | Promise<void> | RouteOutput | void;
+
+export type PostgreFunc<T> = (
+	p: PostgreRouteInput<T>,
 ) => Promise<RouteOutput> | Promise<void> | RouteOutput | void;
 
 export type DatabaselessFunc<T> = (

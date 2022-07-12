@@ -1,16 +1,15 @@
 import type { APIGatewayEvent } from "aws-lambda";
-import { getPostgreInstance } from "config/postgres";
-import { makeController } from "helpers/make-controller";
+import { makePostgreController } from "helpers/make-postgres-controller";
 
 import { service } from "./service";
 
-export const controller = makeController<APIGatewayEvent>(async () => {
-	const postgre = await getPostgreInstance();
-
-	return service(
-		{
-			postgre,
-		},
-		{},
-	);
-});
+export const controller = makePostgreController<APIGatewayEvent>(
+	({ postgre }) => {
+		return service(
+			{
+				postgre,
+			},
+			{},
+		);
+	},
+);

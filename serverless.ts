@@ -6,6 +6,7 @@ import { config } from "dotenv";
 
 import { authDomain } from "./src/api/auth";
 import { templateDomain } from "./src/api/template";
+import { resumeDomain } from "./src/api/resume";
 
 config();
 
@@ -99,6 +100,13 @@ const authConfig = {
 	},
 };
 
+const resumeConfig = {
+	service: "resume",
+	functions: {
+		...resumeDomain,
+	},
+};
+
 const templateConfig = {
 	service: "template",
 	functions: {
@@ -110,6 +118,9 @@ const getConfig = () => {
 	switch (process.env.DEPLOY_TYPE) {
 		case "TEMPLATE":
 			return merge(baseConfig, templateConfig);
+
+		case "RESUME":
+			return merge(baseConfig, resumeConfig);
 
 		case "AUTH":
 		default:
