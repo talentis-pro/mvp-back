@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-
 /**
  * You need to create a migration to update the enum on the database too!
  */
