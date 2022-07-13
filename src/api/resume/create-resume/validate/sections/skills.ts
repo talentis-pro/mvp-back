@@ -6,7 +6,7 @@ import { yup } from "utils/yup";
 import { KnowledgeLevelEnum } from "enums/knowledge-level";
 import { SectionTypeEnum } from "enums/section-type";
 
-export const portfolioSectionSchema = yup
+export const skillsSectionSchema = yup
 	.object()
 	.strict()
 	.shape({
