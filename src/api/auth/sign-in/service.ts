@@ -14,17 +14,17 @@ interface Injectables {
 }
 
 export interface ServiceParams {
-	userId: string;
+	email: string;
 	password: string;
 }
 
 export const service = async (
 	{ postgre, genAllTokens }: Injectables,
-	{ userId, password: rawPassword }: ServiceParams,
+	{ email, password: rawPassword }: ServiceParams,
 ) => {
 	const records = await postgre.query(
-		'SELECT * FROM users WHERE "userId" = $1 LIMIT 1;',
-		[userId],
+		'SELECT * FROM users WHERE "email" = $1 LIMIT 1;',
+		[email],
 	);
 
 	const user = records.rows.shift();
@@ -33,7 +33,7 @@ export const service = async (
 		throw new CustomError("Forbidden", StatusCodeEnum.FORBIDDEN);
 	}
 
-	const { password, verified } = user;
+	const { id: userId, password, verified } = user;
 
 	const isValidPassword = await compare(rawPassword, password);
 

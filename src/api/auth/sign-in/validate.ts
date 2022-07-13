@@ -8,7 +8,7 @@ import type { ServiceParams } from "./service";
 import { StatusCodeEnum } from "enums/status-code";
 
 const schema = yup.object().strict().shape({
-	userId: yup.string().strict().required().uuid(),
+	email: yup.string().strict().required().email(),
 	password: yup.string().strict().required(),
 });
 
