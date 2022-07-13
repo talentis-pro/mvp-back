@@ -1,79 +1,49 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import { Type } from "class-transformer";
-import {
-	IsString,
-	IsUUID,
-	IsDefined,
-	IsOptional,
-	IsBoolean,
-	Equals,
-	IsArray,
-	ValidateNested,
-	ArrayMinSize,
-} from "class-validator";
-import { IsIsoDate } from "utils/validate/is-iso-date";
+import { yup } from "utils/yup";
 
 import { SectionTypeEnum } from "enums/section-type";
 
-class EmploymentSectionItem {
-	@IsDefined()
-	@IsBoolean()
-	public visible: boolean;
-
-	@IsOptional()
-	@IsUUID("4")
-	public companyId?: string;
-
-	@IsDefined()
-	@IsString()
-	public companyName: string;
-
-	@IsOptional()
-	@IsString()
-	public description?: string;
-
-	@IsDefined()
-	@IsString()
-	public location: string;
-
-	@IsDefined()
-	@IsString()
-	public role: string;
-
-	@IsDefined()
-	@IsIsoDate()
-	public startDate: string;
-
-	@IsOptional()
-	@IsIsoDate()
-	public endDate?: string;
-
-	@IsDefined()
-	@IsArray()
-	@ValidateNested({ each: true })
-	@ArrayMinSize(1)
-	@Type(() => String)
-	public inChargeOf: Array<string>;
-
-	@IsOptional()
-	@IsArray()
-	@ValidateNested({ each: true })
-	@ArrayMinSize(1)
-	@Type(() => String)
-	@IsString({ each: true })
-	public skills?: Array<string>;
-}
-
-export class EmploymentSection {
-	@IsDefined()
-	@Equals(SectionTypeEnum.EMPLOYMENTS)
-	public type: SectionTypeEnum.EMPLOYMENTS;
-
-	@IsDefined()
-	@IsArray()
-	@ValidateNested({ each: true })
-	@ArrayMinSize(1)
-	@Type(() => EmploymentSectionItem)
-	public items: Array<EmploymentSectionItem>;
-}
+export const employmentSectionSchema = yup
+	.object()
+	.strict()
+	.shape({
+		type: yup
+			.string()
+			.strict()
+			.required()
+			.equals([SectionTypeEnum.EMPLOYMENTS]),
+		items: yup
+			.array()
+			.strict()
+			.required()
+			.min(1)
+			.of(
+				yup
+					.object()
+					.strict()
+					.required()
+					.shape({
+						visible: yup.bool().strict().required(),
+						companyId: yup.string().strict().notRequired().uuid(),
+						companyName: yup.string().strict().required(),
+						description: yup.string().strict().notRequired(),
+						location: yup.string().strict().notRequired(),
+						role: yup.string().strict().required(),
+						startDate: yup.string().strict().required().isoDate(),
+						endDate: yup.string().strict().notRequired().isoDate(),
+						inChargeOf: yup
+							.array()
+							.strict()
+							.notRequired()
+							.min(1)
+							.of(yup.string().strict().required()),
+						skills: yup
+							.array()
+							.strict()
+							.notRequired()
+							.min(1)
+							.of(yup.string().strict().required()),
+					}),
+			),
+	});

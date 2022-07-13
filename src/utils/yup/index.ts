@@ -8,6 +8,12 @@
 
 import * as yup from "yup";
 
+import { isoDate } from "./string/iso-date";
+import { startsWith } from "./string/starts-with";
+
+isoDate(yup);
+startsWith(yup);
+
 export { yup };
 
 export type Yup = typeof yup;

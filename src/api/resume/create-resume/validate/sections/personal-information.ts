@@ -1,65 +1,34 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import { getEnumValues } from "@techmmunity/utils";
-import {
-	IsDefined,
-	Equals,
-	IsString,
-	IsIn,
-	IsEmail,
-	IsOptional,
-	IsUrl,
-} from "class-validator";
-import { IsIsoDate } from "utils/validate/is-iso-date";
-import { StartsWith } from "utils/validate/starts-with";
+import { yup } from "utils/yup";
 
-import { CurrencyEnum } from "enums/currency";
 import { SectionTypeEnum } from "enums/section-type";
 
-export class PersonalInformationSection {
-	@IsDefined()
-	@Equals(SectionTypeEnum.PERSONAL_INFORMATION)
-	public type: SectionTypeEnum.PERSONAL_INFORMATION;
-
-	@IsDefined()
-	@IsString()
-	public name: string;
-
-	@IsDefined()
-	@IsString()
-	public headline: string;
-
-	@IsDefined()
-	@IsString()
-	public aboutMe: string;
-
-	@IsDefined()
-	@IsIsoDate()
-	public birthDay: string;
-
-	@IsDefined()
-	@IsString()
-	@IsEmail()
-	public email: string;
-
-	@IsDefined()
-	@IsString()
-	public phone: string;
-
-	@IsOptional()
-	@IsString()
-	@IsUrl()
-	@StartsWith("https://www.linkedin.com/in/")
-	public linkedin?: string;
-
-	@IsOptional()
-	@IsString()
-	@IsUrl()
-	@StartsWith("https://github.com/")
-	public github?: string;
-
-	@IsDefined()
-	@IsString()
-	@IsIn(getEnumValues(CurrencyEnum))
-	public currency: CurrencyEnum;
-}
+export const personalInformationSectionSchema = yup
+	.object()
+	.strict()
+	.shape({
+		type: yup
+			.string()
+			.strict()
+			.required()
+			.equals([SectionTypeEnum.PERSONAL_INFORMATION]),
+		name: yup.string().strict().required(),
+		headline: yup.string().strict().required(),
+		aboutMe: yup.string().strict().required(),
+		birthDate: yup.string().strict().required().isoDate(),
+		email: yup.string().strict().required().email(),
+		phone: yup.string().strict().required(),
+		linkedin: yup
+			.string()
+			.strict()
+			.notRequired()
+			.url()
+			.startsWith("https://linkedin.com/in/"),
+		github: yup
+			.string()
+			.strict()
+			.notRequired()
+			.url()
+			.startsWith("https://github.com/"),
+	});

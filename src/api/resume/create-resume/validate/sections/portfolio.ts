@@ -1,41 +1,24 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import { Type } from "class-transformer";
-import {
-	IsString,
-	IsDefined,
-	IsOptional,
-	Equals,
-	IsArray,
-	ValidateNested,
-	ArrayMinSize,
-} from "class-validator";
+import { yup } from "utils/yup";
 
 import { SectionTypeEnum } from "enums/section-type";
 
-class PortfolioSectionItem {
-	@IsDefined()
-	@IsString()
-	public title: string;
-
-	@IsOptional()
-	@IsString()
-	public description?: string;
-
-	@IsOptional()
-	@IsString()
-	public url?: string;
-}
-
-export class PortfolioSection {
-	@IsDefined()
-	@Equals(SectionTypeEnum.PORTFOLIO)
-	public type: SectionTypeEnum.PORTFOLIO;
-
-	@IsDefined()
-	@IsArray()
-	@ValidateNested({ each: true })
-	@ArrayMinSize(1)
-	@Type(() => PortfolioSectionItem)
-	public items: Array<PortfolioSectionItem>;
-}
+export const portfolioSectionSchema = yup
+	.object()
+	.strict()
+	.shape({
+		type: yup.string().strict().required().equals([SectionTypeEnum.PORTFOLIO]),
+		items: yup
+			.array()
+			.strict()
+			.required()
+			.min(1)
+			.of(
+				yup.object().strict().required().shape({
+					title: yup.string().strict().required(),
+					description: yup.string().strict().notRequired(),
+					url: yup.string().strict().notRequired().url(),
+				}),
+			),
+	});

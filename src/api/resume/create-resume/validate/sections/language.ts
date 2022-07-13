@@ -1,25 +1,18 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import {
-	IsDefined,
-	Equals,
-	IsArray,
-	ValidateNested,
-	ArrayMinSize,
-	IsString,
-} from "class-validator";
+import { yup } from "utils/yup";
 
 import { SectionTypeEnum } from "enums/section-type";
 
-export class LanguageSection {
-	@IsDefined()
-	@Equals(SectionTypeEnum.LANGUAGES)
-	public type: SectionTypeEnum.LANGUAGES;
-
-	@IsDefined()
-	@IsArray()
-	@ValidateNested({ each: true })
-	@ArrayMinSize(1)
-	@IsString({ each: true })
-	public items: Array<string>;
-}
+export const languagesSectionSchema = yup
+	.object()
+	.strict()
+	.shape({
+		type: yup.string().strict().required().equals([SectionTypeEnum.LANGUAGES]),
+		items: yup
+			.array()
+			.strict()
+			.required()
+			.min(1)
+			.of(yup.string().strict().required()),
+	});

@@ -1,6 +1,6 @@
 import type { ObjectSchema } from "yup";
 
-import { CustomError } from "../error";
+import { CustomError } from "./error";
 
 import { StatusCodeEnum } from "enums/status-code";
 
