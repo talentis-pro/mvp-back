@@ -4,6 +4,8 @@ import type { AWS } from "@serverless/typescript";
 import { merge } from "lodash";
 import { config } from "dotenv";
 
+import { resourcesResume } from "./resources-resume";
+
 import { authDomain } from "./src/api/auth";
 import { templateDomain } from "./src/api/template";
 import { resumeDomain } from "./src/api/resume";
@@ -102,6 +104,14 @@ const authConfig = {
 
 const resumeConfig = {
 	service: "resume",
+	provider: {
+		environment: {
+			GENERATE_RESUME_QUEUE_URL: {
+				Ref: "GenerateResumeQueue",
+			},
+		}
+	},
+	resources: resourcesResume,
 	functions: {
 		...resumeDomain,
 	},

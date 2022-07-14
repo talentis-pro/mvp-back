@@ -2,7 +2,7 @@
 
 import type { Dayjs } from "dayjs";
 
-import { dayjs } from ".";
+import { date } from ".";
 
 interface GetWeekOfMonthParams {
 	date?: Dayjs;
@@ -11,12 +11,18 @@ interface GetWeekOfMonthParams {
 /**
  * https://stackoverflow.com/a/9608670
  */
-export const getWeekOfMonth = ({ date = dayjs() }: GetWeekOfMonthParams) => {
-	const dayOfTheWeekOfTheFirstDayOfTheMonth = date.clone().set("day", 0).day();
+export const getWeekOfMonth = ({
+	date: dateInstance = date(),
+}: GetWeekOfMonthParams) => {
+	const dayOfTheWeekOfTheFirstDayOfTheMonth = dateInstance
+		.clone()
+		.set("day", 0)
+		.day();
 
-	const lastDayOfMonth = date.daysInMonth();
+	const lastDayOfMonth = dateInstance.daysInMonth();
 
-	const offsetDate = date.date() + dayOfTheWeekOfTheFirstDayOfTheMonth - 1;
+	const offsetDate =
+		dateInstance.date() + dayOfTheWeekOfTheFirstDayOfTheMonth - 1;
 
 	const index = 1; // Start index at 0 or 1, your choice
 

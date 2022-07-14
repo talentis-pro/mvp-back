@@ -29,6 +29,10 @@ declare global {
 			 * Paseto
 			 */
 			PASETO_SECRET: string;
+			/**
+			 * SQS
+			 */
+			GENERATE_RESUME_QUEUE_URL: string;
 		}
 	}
 }

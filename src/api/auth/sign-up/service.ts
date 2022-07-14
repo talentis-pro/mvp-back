@@ -5,7 +5,7 @@ import type { SESClient } from "@aws-sdk/client-ses";
 import { SendEmailCommand } from "@aws-sdk/client-ses";
 import { uid } from "uid/single";
 import { encrypt } from "utils/bcrypt/encrypt";
-import { dayjs } from "utils/date";
+import { date } from "utils/date";
 import { CustomError } from "utils/error";
 import { v4 } from "uuid";
 
@@ -27,7 +27,7 @@ export const service = async (
 	{ email, password: rawPassword }: ServiceParams,
 ) => {
 	const userId = v4();
-	const createdAt = dayjs().toISOString();
+	const createdAt = date().toISOString();
 
 	const password = encrypt(rawPassword);
 

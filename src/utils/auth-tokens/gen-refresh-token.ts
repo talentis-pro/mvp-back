@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import { uid } from "uid/single";
-import { dayjs } from "utils/date";
+import { date } from "utils/date";
 
 import type { PostgreDbClient } from "types/db";
 
@@ -29,7 +29,7 @@ export const genRefreshToken = async ({
 
 	// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 	const token = uid(52);
-	const createdAt = dayjs().toISOString();
+	const createdAt = date().toISOString();
 
 	await postgre.query(
 		'INSERT INTO refresh_tokens("userId", "token", "createdAt") VALUES ($1, $2, $3);',
