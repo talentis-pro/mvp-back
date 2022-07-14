@@ -1,33 +1,23 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-
+import type { ServiceParams } from "api/auth/refresh-token/service";
 import { CustomError } from "utils/error";
 import { makeValidate } from "utils/validate";
 
-import type { ServiceParams } from "../service";
-
-import { resumeSchema } from "./resume";
-import { educationSectionSchema } from "./sections/education";
-import { employmentSectionSchema } from "./sections/employment";
-import { languagesSectionSchema } from "./sections/language";
-import { locationSectionSchema } from "./sections/location";
-import { openSourceSectionSchema } from "./sections/open-source";
-import { organizationSectionSchema } from "./sections/organization";
-import { personalInformationSectionSchema } from "./sections/personal-information";
-import { portfolioSectionSchema } from "./sections/portfolio";
-import { salaryExpectationSectionSchema } from "./sections/salary-expectation";
-import { skillsSectionSchema } from "./sections/skills";
+import { educationSectionSchema } from "./education";
+import { employmentSectionSchema } from "./employment";
+import { languagesSectionSchema } from "./language";
+import { locationSectionSchema } from "./location";
+import { openSourceSectionSchema } from "./open-source";
+import { organizationSectionSchema } from "./organization";
+import { personalInformationSectionSchema } from "./personal-information";
+import { portfolioSectionSchema } from "./portfolio";
+import { salaryExpectationSectionSchema } from "./salary-expectation";
+import { skillsSectionSchema } from "./skills";
 
 import { SectionTypeEnum } from "enums/section-type";
 import { StatusCodeEnum } from "enums/status-code";
 
-export const validate = async (params: ServiceParams) => {
-	const initialValidate = makeValidate<ServiceParams>(resumeSchema);
-
-	const result = await initialValidate(params);
-
-	const { sections: rawSections } = result;
-
-	const sections = rawSections.map(section => {
+export const validateSectionsArray = (rawSections: Array<any>) =>
+	rawSections.map(section => {
 		switch (section.type) {
 			case SectionTypeEnum.EDUCATIONS: {
 				const educationsValidate = makeValidate<ServiceParams>(
@@ -115,9 +105,3 @@ export const validate = async (params: ServiceParams) => {
 			}
 		}
 	});
-
-	return {
-		...result,
-		sections,
-	};
-};
