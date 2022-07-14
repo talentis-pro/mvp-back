@@ -29,7 +29,7 @@ export const validate = async (params: ServiceParams) => {
 
 	const { sections: rawSections } = result;
 
-	const validatedSections = validateSectionsArray(rawSections);
+	const validatedSections = await validateSectionsArray(rawSections);
 
 	return {
 		...result,

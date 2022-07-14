@@ -109,6 +109,10 @@ const resumeConfig = {
 			GENERATE_RESUME_QUEUE_URL: {
 				Ref: "GenerateResumeQueue",
 			},
+			GENERATE_RESUME_WORKFLOW: {
+				"Fn::Sub":
+					"arn:${AWS::Partition}:states:${AWS::Region}:${AWS::AccountId}:stateMachine:${AWS::StackName}-generate-resume",
+			},
 		}
 	},
 	resources: resourcesResume,

@@ -20,7 +20,7 @@ export interface RouteOutput {
 	body?: string;
 }
 
-export type VodRouteOutput = Record<string, any>;
+export type GenerateResumeRouteOutput = Record<string, any>;
 
 export type Route<T> = (
 	p: RouteInput<T>,
@@ -40,6 +40,10 @@ export type DatabaselessFunc<T> = (
 	p: RouteInput<T>,
 ) => Promise<RouteOutput> | Promise<void> | RouteOutput | void;
 
-export type VodFunc<T> = (
+export type GenerateResumeFunc<T> = (
 	p: RouteInput<T>,
-) => Promise<VodRouteOutput> | Promise<void> | VodRouteOutput | void;
+) =>
+	| GenerateResumeRouteOutput
+	| Promise<GenerateResumeRouteOutput>
+	| Promise<void>
+	| void;

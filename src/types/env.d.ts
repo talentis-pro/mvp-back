@@ -33,6 +33,10 @@ declare global {
 			 * SQS
 			 */
 			GENERATE_RESUME_QUEUE_URL: string;
+			/**
+			 * Step Functions
+			 */
+			GENERATE_RESUME_WORKFLOW: string;
 		}
 	}
 }

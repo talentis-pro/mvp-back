@@ -4,12 +4,13 @@ import type { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import type { SQSClient } from "@aws-sdk/client-sqs";
 import { SendMessageCommand } from "@aws-sdk/client-sqs";
-import { marshall } from "@aws-sdk/util-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { date } from "utils/date";
 import { CustomError } from "utils/error";
 
 import type { LanguageEnum } from "enums/language";
 import { StatusCodeEnum } from "enums/status-code";
+import type { Sections } from "types/resume/sections";
 
 interface Injectables {
 	dynamo: DynamoDBClient;
@@ -22,7 +23,7 @@ export interface ServiceParams {
 	templateId?: string;
 	name?: string;
 	language?: LanguageEnum;
-	sections?: Array<any>;
+	sections?: Sections;
 }
 
 export const service = async (
@@ -81,12 +82,18 @@ export const service = async (
 		}),
 	);
 
+	const { templateId: templateIdValue, language: languageValue } = unmarshall(
+		resume.Item,
+	);
+
 	await sqs.send(
 		new SendMessageCommand({
 			QueueUrl: process.env.GENERATE_RESUME_QUEUE_URL,
 			MessageBody: JSON.stringify({
 				resumeId,
 				userId,
+				templateId: templateId || templateIdValue,
+				language: language || languageValue,
 			}),
 		}),
 	);

@@ -53,7 +53,7 @@ export const validate = async (params: ServiceParams) => {
 	}
 
 	if (sectionsValue) {
-		const validatedSections = validateSectionsArray(sectionsValue);
+		const validatedSections = await validateSectionsArray(sectionsValue);
 
 		return {
 			...result,

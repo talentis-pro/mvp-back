@@ -12,6 +12,7 @@ import { v4 } from "uuid";
 
 import type { LanguageEnum } from "enums/language";
 import { StatusCodeEnum } from "enums/status-code";
+import type { Sections } from "types/resume/sections";
 
 interface Injectables {
 	dynamo: DynamoDBClient;
@@ -23,7 +24,7 @@ export interface ServiceParams {
 	templateId: string;
 	name: string;
 	language: LanguageEnum;
-	sections: Array<any>;
+	sections: Sections;
 }
 
 export const service = async (

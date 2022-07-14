@@ -2,6 +2,7 @@ import { createResume } from "./create-resume/handler";
 import { deleteResume } from "./delete-resume/handler";
 import { editResumeName } from "./edit-resume-name/handler";
 import { editResume } from "./edit-resume/handler";
+import { triggerGenerateWorkflow } from "./generate-resume-worklow/trigger-generate-workflow/handler";
 import { getUserResumes } from "./get-user-resumes/handler";
 
 export const resumeDomain = {
@@ -10,4 +11,5 @@ export const resumeDomain = {
 	resumeDomainEditResumeName: editResumeName,
 	resumeDomainEditResume: editResume,
 	resumeDomainGetUserResumes: getUserResumes,
+	resumeDomainTriggerGenerateWorkflow: triggerGenerateWorkflow,
 };
