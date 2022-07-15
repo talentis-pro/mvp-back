@@ -113,6 +113,10 @@ const resumeConfig = {
 				"Fn::Sub":
 					"arn:${AWS::Partition}:states:${AWS::Region}:${AWS::AccountId}:stateMachine:${AWS::StackName}-generate-resume",
 			},
+			UPDATE_RESUME_STATUS_LAMBDA_ARN: {
+				"Fn::Sub":
+					"arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${AWS::StackName}-grUpdateResumeStatus",
+			},
 		}
 	},
 	resources: resourcesResume,

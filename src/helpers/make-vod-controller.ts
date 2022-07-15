@@ -1,6 +1,7 @@
+import { errorHandler } from "api/resume/generate-resume-workflow/handle-error";
 import type { Callback, Context } from "aws-lambda";
 
-import type { GenerateResumeEvent } from "../api/resume/generate-resume-worklow/types";
+import type { GenerateResumeEvent } from "../api/resume/generate-resume-workflow/types";
 
 import type {
 	GenerateResumeFunc,
@@ -8,21 +9,27 @@ import type {
 } from "types/route";
 
 export const makeGenerateResumeController =
-	(func: GenerateResumeFunc<GenerateResumeEvent>) =>
+	<Event = GenerateResumeEvent>(func: GenerateResumeFunc<Event>) =>
 	async (
-		event: GenerateResumeEvent,
+		event: Event,
 		context: Context,
 		callback: Callback,
 	): Promise<GenerateResumeRouteOutput | void> => {
-		const result = await func({
-			event,
-			context,
-			callback,
-		});
+		try {
+			const result = await func({
+				event,
+				context,
+				callback,
+			});
 
-		if (result) {
-			return { ...event, ...result };
+			if (result) {
+				return { ...event, ...result };
+			}
+
+			return event;
+		} catch (err: any) {
+			await errorHandler(event, err);
+
+			throw err;
 		}
-
-		return event;
 	};

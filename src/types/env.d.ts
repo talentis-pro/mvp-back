@@ -37,6 +37,10 @@ declare global {
 			 * Step Functions
 			 */
 			GENERATE_RESUME_WORKFLOW: string;
+			/**
+			 * Lambdas
+			 */
+			UPDATE_RESUME_STATUS_LAMBDA_ARN: string;
 		}
 	}
 }
