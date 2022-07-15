@@ -4,10 +4,6 @@ import { makeGenerateResumeController } from "helpers/make-generate-resume-contr
 import { service } from "./service";
 
 export const controller = makeGenerateResumeController(({ event }) => {
-	console.error(event);
-
-	if (!event.updateResumeStatusTo) return;
-
 	return service(
 		{
 			dynamo: getDynamoInstance(),
@@ -15,7 +11,8 @@ export const controller = makeGenerateResumeController(({ event }) => {
 		{
 			userId: event.userId,
 			resumeId: event.resumeId,
-			updateResumeStatusTo: event.updateResumeStatusTo,
+			templateId: event.templateId,
+			language: event.language,
 		},
 	);
 });

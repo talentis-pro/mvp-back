@@ -1,6 +1,6 @@
 import type { SQSEvent } from "aws-lambda";
 import { getSfnInstance } from "config/sfn";
-import { makeGenerateResumeController } from "helpers/make-vod-controller";
+import { makeGenerateResumeController } from "helpers/make-generate-resume-controller";
 
 import { service } from "./service";
 

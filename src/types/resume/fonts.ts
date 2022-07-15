@@ -1,3 +1,8 @@
+export interface FontUsed {
+	fontName: string;
+	variations: Array<"bold" | "boldItalic" | "italic" | "regular">;
+}
+
 export interface Font {
 	fontName: string;
 	bold?: Buffer;

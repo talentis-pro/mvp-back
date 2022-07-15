@@ -13,7 +13,7 @@ export const editResumeName = makeHandler({
 			http: {
 				cors: true,
 				method: "PATCH",
-				path: "resumes/{resumeId}/name",
+				path: "resumes/{resumeId}",
 			},
 		},
 	],
