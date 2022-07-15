@@ -11,6 +11,7 @@ import { CustomError } from "utils/error";
 import { v4 } from "uuid";
 
 import type { LanguageEnum } from "enums/language";
+import { ResumeStatusEnum } from "enums/resume-status";
 import { StatusCodeEnum } from "enums/status-code";
 import type { Sections } from "types/resume/sections";
 
@@ -65,7 +66,7 @@ export const service = async (
 				name,
 				language,
 				sections,
-				version: 1,
+				status: ResumeStatusEnum.PROCESSING,
 				createdAt: date().toISOString(),
 				updatedAt: date().toISOString(),
 			}),

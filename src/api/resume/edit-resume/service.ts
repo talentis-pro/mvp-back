@@ -9,6 +9,7 @@ import { date } from "utils/date";
 import { CustomError } from "utils/error";
 
 import type { LanguageEnum } from "enums/language";
+import { ResumeStatusEnum } from "enums/resume-status";
 import { StatusCodeEnum } from "enums/status-code";
 import type { Sections } from "types/resume/sections";
 
@@ -45,6 +46,19 @@ export const service = async (
 		throw new CustomError("Resume not found", StatusCodeEnum.NOT_FOUND);
 	}
 
+	const {
+		templateId: templateIdValue,
+		language: languageValue,
+		status: statusValue,
+	} = unmarshall(resume.Item);
+
+	if (statusValue === ResumeStatusEnum.PROCESSING) {
+		throw new CustomError(
+			"Resume already being processed",
+			StatusCodeEnum.CONFLICT,
+		);
+	}
+
 	await dynamo.send(
 		new UpdateItemCommand({
 			TableName: "mvp-resumes",
@@ -55,10 +69,9 @@ export const service = async (
 					"#name=:name",
 					"#language=:language",
 					"#sections=:sections",
+					"#status=:status",
 					"#updatedAt=:updatedAt",
 				].join(", "),
-				"ADD",
-				["#version=:version"].join(", "),
 			].join(" "),
 			Key: marshall({
 				pk: `USER#${userId}`,
@@ -69,6 +82,7 @@ export const service = async (
 				"#name": "name",
 				"#language": "language",
 				"#sections": "sections",
+				"#status": "status",
 				"#updatedAt": "updatedAt",
 			},
 			ExpressionAttributeValues: marshall({
@@ -76,14 +90,10 @@ export const service = async (
 				name,
 				language,
 				sections,
-				version: 1,
+				status: ResumeStatusEnum.PROCESSING,
 				updatedAt: date().toISOString(),
 			}),
 		}),
-	);
-
-	const { templateId: templateIdValue, language: languageValue } = unmarshall(
-		resume.Item,
 	);
 
 	await sqs.send(
